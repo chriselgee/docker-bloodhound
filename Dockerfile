@@ -1,4 +1,4 @@
-FROM debian:stable-slim
+FROM debian:11-slim
 LABEL org.opencontainers.image.authors="https://github.com/belane" \
       org.opencontainers.image.description="BloodHound Docker Ready to Use" \
       org.opencontainers.image.source="https://github.com/belane/docker-bloodhound" \
