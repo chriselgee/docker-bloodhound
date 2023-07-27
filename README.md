@@ -23,3 +23,5 @@
 ## Documentation
 
 [Official BloodHound Documentation](https://bloodhound.readthedocs.io/en/latest/index.html)
+
+TODO: Steal queries from [here](https://github.com/ZephrFish/Bloodhound-CustomQueries/blob/main/customqueries.json).

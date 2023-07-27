@@ -1,11 +1,6 @@
 FROM ubuntu:focal
-LABEL org.opencontainers.image.authors="https://github.com/belane" \
-      org.opencontainers.image.description="BloodHound Docker Ready to Use" \
-      org.opencontainers.image.source="https://github.com/belane/docker-bloodhound" \
-      org.opencontainers.image.title="docker-bloodhound" \
-      org.opencontainers.image.version="0.2.1"
 
-# Base packages
+### Base packages
 RUN apt-get update -qq
 RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install --no-install-recommends -y -qq\
       wget \
@@ -29,7 +24,7 @@ RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install --no-install-recom
 ARG neo4j=4.4.22
 ARG bloodhound=4.3.1
 
-# Neo4j
+### Neo4j
 RUN wget -nv -O - https://debian.neo4j.com/neotechnology.gpg.key | tee /etc/apt/trusted.gpg.d/neo4j.asc &&\
     echo 'deb https://debian.neo4j.com stable 4.4' | tee /etc/apt/sources.list.d/neo4j.list &&\
     apt-get update &&\
@@ -38,26 +33,27 @@ RUN wget -nv -O - https://debian.neo4j.com/neotechnology.gpg.key | tee /etc/apt/
 # RUN wget "https://dist.neo4j.org/cypher-shell/cypher-shell_4.4.22_all.deb"
 # RUN dpkg -i cypher-shell_4.4.22_all.deb
 
-# BloodHound
-# From source?  Nah.
+### BloodHound
+### From source?  Nah.
 # RUN wget https://github.com/BloodHoundAD/BloodHound/archive/refs/tags/v${bloodhound}.zip -nv -P /tmp
 # RUN unzip /tmp/v${bloodhound}.zip -nv -P /tmp
 # RUN apt-get install -y build-essential gcc npm
 # WORKDIR /opt/BloodHound-${bloodhound}
 # RUN npm install
-# From releases
+
+### From releases
 RUN wget https://github.com/BloodHoundAD/BloodHound/releases/download/v$bloodhound/BloodHound-linux-x64.zip -nv -P /tmp &&\
     unzip /tmp/BloodHound-linux-x64.zip -d /opt/ &&\
     mkdir /data &&\
     chmod +x /opt/BloodHound-linux-x64/BloodHound
 
-# BloodHound Config
+### BloodHound Config
 COPY config.json /root/.config/bloodhound/
 
-# Custom Queries
-RUN wget https://raw.githubusercontent.com/CompassSecurity/BloodHoundQueries/master/BloodHound_Custom_Queries/customqueries.json -nv -P /root/.config/bloodhound/
+### Custom Queries
+RUN wget https://raw.githubusercontent.com/ZephrFish/Bloodhound-CustomQueries/main/customqueries.json -nv -P /root/.config/bloodhound/
 
-# Init Script
+### Init Script
 RUN echo '#!/usr/bin/env bash\n\
     neo4j-admin set-initial-password blood \n\
     # service neo4j start\n\
@@ -67,7 +63,7 @@ RUN echo '#!/usr/bin/env bash\n\
     sleep 7; /opt/BloodHound-linux-x64/BloodHound --no-sandbox 2>/dev/null\n' > /opt/run.sh &&\
     chmod +x /opt/run.sh
 
-# Clean up
+### Clean up
 # RUN apt-get clean &&\
 #     apt-get clean autoclean &&\
 #     apt-get autoremove -y &&\
@@ -76,5 +72,5 @@ RUN echo '#!/usr/bin/env bash\n\
 
 
 WORKDIR /data
-# CMD ["/opt/run.sh"]
-CMD ["/bin/bash"]
+CMD ["/opt/run.sh"]
+# CMD ["/bin/bash"]
